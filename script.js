@@ -14,7 +14,8 @@ var options = {
 	voiceRate: 1.0,
 	voicePitch: 1.0,
 	voiceVolume: 1.0,
-	delay: 0.0
+	delay: 0.0,
+	beginWith: ""
 }
 
 function loadOptions() {
@@ -25,7 +26,8 @@ function loadOptions() {
 		voiceRate: 1.0,
 		voicePitch: 1.0,
 		voiceVolume: 1.0,
-		delay: 0.0
+		delay: 0.0,
+		beginWith: ""
 	}, function(items) {
 		options.voiceType = items.voiceType;
 		options.emojisEnabled = items.emojisEnabled;
@@ -33,7 +35,8 @@ function loadOptions() {
 		options.voicePitch = items.voicePitch;
 		options.voiceVolume = items.voiceVolume;
 		options.delay = items.delay;
-		console.log('loadOptions: voice: ' + items.voiceType + ' emojis: ' + items.emojisEnabled + ' rate: ' + items.voiceRate + ' pitch: ' + items.voicePitch + ' volume: ' + items.voiceVolume + ' delay: ' + items.delay);
+		options.beginWith = items.beginWith;
+		console.log('loadOptions',options);
 	});
 }
 loadOptions();
@@ -57,7 +60,7 @@ chrome.storage.onChanged.addListener(function(changes, areaName) {
 			options[k] = changes[k].newValue;
 		}
 	}
-	console.log('Options changed. Voice: ' + options.voiceType + ' Emojis: ' + options.emojisEnabled + ' rate: ' + options.voiceRate + ' pitch: ' + options.voicePitch + ' volume: ' + options.voiceVolume + ' delay: ' + options.delay);
+	console.log('Options changed', options);
 	updateVoice();
 })
 
@@ -138,7 +141,6 @@ class ChatWatcher {
 	}
 
 	addToQueue(id, author, msg) {
-		//console.log('addToQueue ' + id);
 		if(!(id in this.queue) && !this.detached) {
 			this.queue[id] = [author, msg];
 			this.updateSpeech();
@@ -247,8 +249,14 @@ function initWatching() {
 							msg = $(this).find('#message').text();
 						}
 						// Check if there is any non-whitespace character
-						if (/\S/.test(msg)) {
+						if (/\S/.test(msg) && msg.startsWith(options.beginWith)) {
+							msg = msg.substr(options.beginWith.length);
+
+							console.log("Adding message",msg);
 							watcher.addToQueue(id, author, msg);
+						} else {
+
+							console.log("Ignoring message",msg);
 						}
 					}
 				});

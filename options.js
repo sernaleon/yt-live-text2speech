@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	let pitchInput = document.getElementById('pitch');
 	let volumeInput = document.getElementById('volume');
 	let delayInput = document.getElementById('delay');
+	let beginWithInput = document.getElementById('beginWith');
 	let statusText = document.getElementById('status');
 
 	function saveChanges() {
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		let voicePitch = pitchInput.value;
 		let voiceVolume = volumeInput.value;
 		let delay = delayInput.value;
+		let beginWith = beginWithInput.value;
 
 		chrome.storage.sync.set({
 			voiceType: voice,
@@ -30,7 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			voiceRate: voiceRate,
 			voicePitch: voicePitch,
 			voiceVolume: voiceVolume,
-			delay: delay
+			delay: delay,
+			beginWith:beginWith
 		}, function() {
 			statusText.textContent = 'Options saved.';
 			console.log('Changes saved! Voice: ' + voice + '; emojis: ' + emojis + '; rate: ' + voiceRate + '; pitch: ' + voicePitch + '; volume: ' + voiceVolume + '; delay: ' + delay);
@@ -45,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			voiceRate: 1.0,
 			voicePitch: 1.0,
 			voiceVolume: 1.0,
-			delay: 0.0
+			delay: 0.0,
+			beginWith:"AA"
 		}, function(items) {
 			console.log('Options loaded! Voice: ' + items.voiceType + '; emojis: ' + items.emojisEnabled + '; rate: ' + items.voiceRate + '; pitch: ' + items.voicePitch + '; volume: ' + items.voiceVolume);
 			
@@ -61,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			pitchInput.value = items.voicePitch;
 			volumeInput.value = items.voiceVolume;
 			delayInput.value = items.delay;
+			beginWithInput.value = items.beginWith;
 
 			voiceSelect.disabled = false;
 			emojisCheck.disabled = false;
@@ -68,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			pitchInput.disabled = false;
 			volumeInput.disabled = false;
 			delayInput.disabled = false;
+			beginWithInput.disabled = false;
 		});
 	}
 
@@ -77,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	pitchInput.addEventListener('change', saveChanges);
 	volumeInput.addEventListener('change', saveChanges);
 	delayInput.addEventListener('change', saveChanges);
+	beginWithInput.addEventListener('change', saveChanges);
 
 	function loadVoices() {
 		let voices = speechSynthesis.getVoices();
