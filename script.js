@@ -249,7 +249,7 @@ function initWatching() {
 							msg = $(this).find('#message').text();
 						}
 						// Check if there is any non-whitespace character
-						if (/\S/.test(msg) && msg.startsWith(options.beginWith)) {
+						if (/\S/.test(msg) && msg.toLowerCase().startsWith(options.beginWith.toLowerCase())) {
 							msg = msg.substr(options.beginWith.length);
 
 							console.log("Adding message",msg);
